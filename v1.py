@@ -18,25 +18,6 @@ def read_and_store():
     virtual_machines.append(json_dict['vms'][0])
     firewall_rules.append(json_dict['fw_rules'])
 
-
-'''
-class VirtualMachine(Resource):
-    def get(self, vm_id):
-        return {"vm_id": vm_id}
-
-    def post(self, vm_id):
-        data = request.get_json()
-
-
-class FirewallRules(Resource):
-    def get(self, fw_id, source_tag, dest_tag):
-        return {"fw_id": fw_id,
-                "source tag": source_tag,
-                "destination tag": dest_tag
-                }
-'''
-
-
 class Attack(Resource):
     def get(self, vm_id):
         vm_tags = []
@@ -51,11 +32,16 @@ class Attack(Resource):
             return "VM not found!"
 
 
+class Stats(Resource):
+    def get(self):
+        return {"vm_count:": len(virtual_machines)}
+
+
 api.add_resource(Attack, '/attack', '/attack/<string:vm_id>')
+api.add_resource(Stats, '/stats')
 
 if __name__ == '__main__':
     read_and_store()
-
     # print(virtual_machines)
     # print(firewall_rules)
     app.run(port=5000)
