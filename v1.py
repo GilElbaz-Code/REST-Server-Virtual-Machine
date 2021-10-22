@@ -1,6 +1,5 @@
-from flask import Flask, request, jsonify, g
+from flask import Flask, jsonify, g
 from flask_restful import Api, Resource
-from flask_profiler import Profiler, flask_profiler
 import json
 import time
 
@@ -10,7 +9,7 @@ api = Api(app)
 
 virtual_machines = []
 firewall_rules = []
-diffs = []
+TIME_SUM = 0
 COUNT = 0
 
 
@@ -29,9 +28,11 @@ class Attack(Resource):
         COUNT += 1
         vm_tags = []
         fw_tags = []
+        # Check if the vm exist in input
         vm = next(filter(lambda x: x['vm_id'] == vm_id, virtual_machines), None)
         for fw in firewall_rules:
             pass
+        # Append all tags of found vm in a list
         if vm is not None:
             vm_tags.append(vm['tags'])
             return vm_tags
@@ -44,7 +45,7 @@ class Stats(Resource):
         global COUNT
         COUNT += 1
         return jsonify(vm_count=len(virtual_machines), request_count=COUNT,
-                       average_request_time=(sum(diffs) / len(diffs)))
+                       average_request_time=(TIME_SUM / COUNT))
 
 
 @app.before_request
@@ -54,10 +55,10 @@ def before_request():
 
 @app.after_request
 def after_request(response):
+    global TIME_SUM
     diff = time.time() - g.start
-    diffs.append(diff)
+    TIME_SUM += diff
     return response
-
 
 
 api.add_resource(Attack, '/attack', '/attack/<string:vm_id>')
