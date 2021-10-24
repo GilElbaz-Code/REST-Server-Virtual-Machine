@@ -9,7 +9,7 @@ api = Api(app)
 
 TIME_SUM = 0
 COUNT = 0
-PATH = r"C:\Users\Gil\PycharmProjects\api\data\input-0.json"
+PATH = r"C:\Users\Gil\PycharmProjects\api\data\input-2.json"
 
 
 # This function reads the json file and stores each element in the relevant list
@@ -39,7 +39,7 @@ def read_and_store():
                     src_tag = fw['source_tag']
                 for vms in vms_dict:
                     if src_tag in vms['tags']:
-                        return vms['vm_id']
+                        return jsonify(vms['vm_id'])
 
     class Stats(Resource):
         def get(self):
