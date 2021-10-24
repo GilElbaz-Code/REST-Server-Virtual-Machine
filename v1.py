@@ -9,7 +9,7 @@ api = Api(app)
 
 TIME_SUM = 0
 COUNT = 0
-PATH = r"C:\Users\Gil\PycharmProjects\api\data\input-2.json"
+PATH = r"C:\Users\Gil\PycharmProjects\api\data\input-3.json"
 
 
 # This function reads the json file and stores each element in the relevant list
@@ -25,6 +25,7 @@ def read_and_store():
             global COUNT
             COUNT += 1
             vm_tags = []
+            can_access = []
             src_tag = ""
             # Check if the vm exist in input, there is only one because every ID is unique
             vm = next(filter(lambda x: x['vm_id'] == vm_id, vms_dict), None)
@@ -39,7 +40,11 @@ def read_and_store():
                     src_tag = fw['source_tag']
                 for vms in vms_dict:
                     if src_tag in vms['tags']:
-                        return jsonify(vms['vm_id'])
+                        can_access.append(vms['vm_id'])
+            # Remove duplicates
+            res = []
+            [res.append(x) for x in can_access if x not in res]
+            return jsonify(res)
 
     class Stats(Resource):
         def get(self):
