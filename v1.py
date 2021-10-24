@@ -7,52 +7,45 @@ app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 api = Api(app)
 
-virtual_machines = []
-firewall_rules = []
-vm_dict = {}
 TIME_SUM = 0
 COUNT = 0
+PATH = r"C:\Users\Gil\PycharmProjects\api\data\input-0.json"
 
 
 # This function reads the json file and stores each element in the relevant list
 def read_and_store():
-    with open(r"C:\Users\Gil\PycharmProjects\api\data\input-0.json") as file:
+    with open(PATH) as file:
         json_str = file.read()
         json_dict = json.loads(json_str)
-    virtual_machines.append(json_dict['vms'])
-    firewall_rules.append(json_dict['fw_rules'])
-    print(json_dict['vms'])
-
+    vms_dict = json_dict['vms']
+    fwr_dict = json_dict['fw_rules']
 
     class Attack(Resource):
         def get(self, vm_id):
             global COUNT
             COUNT += 1
             vm_tags = []
-            can_access = []
-            dest_tag = ""
             src_tag = ""
-            # Check if the vm exist in input
-            vm = next(filter(lambda x: x['vm_id'] == vm_id, virtual_machines), None)
+            # Check if the vm exist in input, there is only one because every ID is unique
+            vm = next(filter(lambda x: x['vm_id'] == vm_id, vms_dict), None)
             if vm is not None:
-                # Append all tags of found vm in a list
+                # vm_tags - all tags that are in the tags section in the input vm
                 vm_tags.append(vm['tags'])
             else:
                 return "VM not found!"
-            for fw in firewall_rules[0]:
+            for fw in fwr_dict:
                 if fw['dest_tag'] in vm_tags[0]:
                     dest_tag = fw['dest_tag']
                     src_tag = fw['source_tag']
-            for vm_acc in virtual_machines:
-                if src_tag in vm_acc['tags']:
-                    can_access.append(vm_acc['vm_id'])
-                return jsonify(can_access)
+                for vms in vms_dict:
+                    if src_tag in vms['tags']:
+                        return vms['vm_id']
 
     class Stats(Resource):
         def get(self):
             global COUNT
             COUNT += 1
-            return jsonify(vm_count=len(virtual_machines), request_count=COUNT,
+            return jsonify(vm_count=len(vms_dict), request_count=COUNT,
                            average_request_time=(TIME_SUM / COUNT))
 
     @app.before_request
@@ -69,6 +62,7 @@ def read_and_store():
     api.add_resource(Attack, '/attack', '/attack/<string:vm_id>')
     api.add_resource(Stats, '/stats')
 
-    if __name__ == '__main__':
-        read_and_store()
-        app.run(port=5000)
+
+if __name__ == '__main__':
+    read_and_store()
+    app.run(port=5000)
