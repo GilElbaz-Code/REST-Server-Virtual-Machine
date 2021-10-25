@@ -9,7 +9,7 @@ api = Api(app)
 
 TIME_SUM = 0
 COUNT = 0
-PATH = r"C:\Users\Gil\PycharmProjects\api\data\input-3.json"
+PATH = r"C:\Users\Gil\PycharmProjects\api\data\input-2.json"
 
 
 # This function reads the json file and stores each element in the relevant list
@@ -36,7 +36,7 @@ def read_and_store():
                 return "VM not found!"
             for fw in fwr_dict:
                 if fw['dest_tag'] in vm_tags[0]:
-                    dest_tag = fw['dest_tag']
+                    # dest_tag = fw['dest_tag']
                     src_tag = fw['source_tag']
                 for vms in vms_dict:
                     if src_tag in vms['tags']:
