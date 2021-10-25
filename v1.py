@@ -7,6 +7,7 @@ app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 api = Api(app)
 
+# Global variables
 TIME_SUM = 0
 COUNT = 0
 PATH = r"C:\Users\Gil\PycharmProjects\api\data\input-2.json"
