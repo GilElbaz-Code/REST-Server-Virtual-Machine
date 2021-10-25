@@ -1,3 +1,4 @@
 -v1-
 Used flask and flask-RESTful for this exercise.
 In the globals section just put the absolute path of the JSON file (PATH variable).
+Run the server and use the wanted endpoints.
